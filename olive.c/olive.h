@@ -26,7 +26,7 @@ void fill_rect(u_int32_t *pixels, u_int32_t pixels_width,
   }
 }
 
-void file_cir(u_int32_t *pixels, u_int32_t pixels_width,
+void fill_cir(u_int32_t *pixels, u_int32_t pixels_width,
               u_int32_t pixels_height, int cx, int cy, int r, u_int32_t color) {
   int x1 = cx - r;
   int y1 = cy - r;
@@ -34,15 +34,15 @@ void file_cir(u_int32_t *pixels, u_int32_t pixels_width,
   int y2 = cy + r;
 
   for (int y = y1; y <= y2; y++) {
-    if (0 > y && y >= (int)pixels_height)
-      continue;
-    for (int x = x1; x <= x2; x++) {
-      if (0 > x && x >= (int)pixels_width)
-        continue;
-      int dx = x - cx;
-      int dy = y - cy;
-      if (dx * dx + dy * dy <= r * r) {
-        pixels[y * pixels_width + x] = color;
+    if (0 <= y && y < (int)pixels_height) {
+      for (int x = x1; x <= x2; x++) {
+        if (0 <= x && x < (int)pixels_width) {
+          int dx = x - cx;
+          int dy = y - cy;
+          if (dx * dx + dy * dy <= r * r) {
+            pixels[y * pixels_width + x] = color;
+          }
+        }
       }
     }
   }
