@@ -1,12 +1,18 @@
-#include "olive.h"
+#include "olive.c"
 #include <stdio.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 
-#define WIDTH 800
-#define HEIGHT 600
+#define SCALER 3
+#define WIDTH (SCALER * 800)
+#define HEIGHT (SCALER * 600)
+
+#define IMG_DIR "demos"
 
 #define BACLGROUD_COLOR 0xFF202020
 #define FOREGROUD_COLOR 0xFF0000FF
 
+// access a pixed [HEIGHT*x + WIDTH]
 u_int32_t pixels[HEIGHT * WIDTH];
 
 // for the cheker board
@@ -28,7 +34,7 @@ void checkerboard_rec() {
                 CELL_WIDTH, CELL_HEIGHT, color);
     }
   }
-  const char *ouput = "chekerboard_rec.ppm";
+  const char *ouput = IMG_DIR "/chekerboard_rec.ppm";
   if (save_to_file(pixels, WIDTH, HEIGHT, ouput) < 0) {
     printf("err: while saveing file %s\n", ouput);
   }
@@ -54,13 +60,38 @@ void checkerboard_cir() {
                (int)lerpf((float)r / 8, (float)r / 2, t), FOREGROUD_COLOR);
     }
   }
-  const char *ouput = "chekerboard_cir.ppm";
+  const char *ouput = IMG_DIR "/chekerboard_cir.ppm";
+  if (save_to_file(pixels, WIDTH, HEIGHT, ouput) < 0) {
+    printf("err: while saveing file %s\n", ouput);
+  }
+}
+
+void lines_man() {
+  fill(pixels, WIDTH, HEIGHT, BACLGROUD_COLOR);
+
+  u_int32_t c = FOREGROUD_COLOR;
+  draw_line(pixels, WIDTH, HEIGHT, WIDTH / 2, HEIGHT, WIDTH / 2, 0, c);
+  draw_line(pixels, WIDTH, HEIGHT, 0, HEIGHT / 2, WIDTH, HEIGHT / 2, c);
+
+  c = 0xFF00FA00;
+  draw_line(pixels, WIDTH, HEIGHT, 0, 0, WIDTH, HEIGHT, c);
+  draw_line(pixels, WIDTH, HEIGHT, 0, HEIGHT, WIDTH, 0, c);
+
+  c = 0xFFF40000;
+  draw_line(pixels, WIDTH, HEIGHT, 0, 0, WIDTH / 4, HEIGHT, c);
+  draw_line(pixels, WIDTH, HEIGHT, WIDTH / 4, 0, 0, HEIGHT, c);
+  draw_line(pixels, WIDTH, HEIGHT, WIDTH, 0, WIDTH / 4 * 3, HEIGHT, c);
+  draw_line(pixels, WIDTH, HEIGHT, WIDTH / 4 * 3, 0, WIDTH, HEIGHT, c);
+
+  const char *ouput = IMG_DIR "/lines.ppm";
   if (save_to_file(pixels, WIDTH, HEIGHT, ouput) < 0) {
     printf("err: while saveing file %s\n", ouput);
   }
 }
 
 int main() {
+  mkdir(IMG_DIR, 0777);
+  lines_man();
   checkerboard_rec();
   checkerboard_cir();
 }
